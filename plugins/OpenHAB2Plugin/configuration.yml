@@ -1,0 +1,6 @@
+openhab:
+  language: es-ES
+  host: localhost
+  port: 8080
+  username: 
+  password: 
