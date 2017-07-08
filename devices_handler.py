@@ -7,7 +7,7 @@ import mqtt_handler
 
 logger = logging.getLogger("devices_handler")
 
-REGISTER_TOPIC = "mayordomo/devices/register"
+REGISTER_TOPIC = "mayordomo/devices/register/+"
 
 devices = {}
 
