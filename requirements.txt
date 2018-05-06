@@ -1,0 +1,7 @@
+paho-mqtt
+googletrans
+pycountry
+nltk
+pyee
+pyyaml
+polib
