@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-import freeling
+import pyfreeling as freeling
 import os
 import logging
 
