@@ -5,6 +5,9 @@ from __future__ import unicode_literals
 
 import requests
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 OPENHAB_HOST = "localhost"
 OPENHAB_PORT = 8080
@@ -23,8 +26,11 @@ def initialize(host=OPENHAB_HOST, port=OPENHAB_PORT, user=OPENHAB_USER, password
 def send_command(item_name, command):
     url = "http://{}:{}/rest/items/{}".format(OPENHAB_HOST, OPENHAB_PORT, item_name)
     auth = (OPENHAB_USER, OPENHAB_PASSWORD)
-    headers = {'content-type': "application/json; charset=utf-8"}
-    r = requests.post(url, auth=auth, data=str(command))
+    try:
+        r = requests.post(url, auth=auth, data=str(command))
+    except requests.exceptions.RequestException as e:
+        logger.error("Cannot stablish connection with openHAB server: {}".format(e))
+        return None
     r.encoding = 'utf-8'
     if r.status_code != 200:
         return None
@@ -35,7 +41,11 @@ def get_item_state(item_name):
     url = "http://{}:{}/rest/items/{}".format(OPENHAB_HOST, OPENHAB_PORT, item_name)
     auth = (OPENHAB_USER, OPENHAB_PASSWORD)
     headers = {'content-type': "application/json; charset=utf-8"}
-    r = requests.get(url, auth=auth, headers=headers)
+    try:
+        r = requests.get(url, auth=auth, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error("Cannot stablish connection with openHAB server: {}".format(e))
+        return None
     r.encoding = 'utf-8'
     if r.status_code != 200:
         return None
@@ -48,10 +58,14 @@ def get_all_items():
     url = "http://{}:{}/rest/items?recursive=true".format(OPENHAB_HOST, OPENHAB_PORT)
     auth = (OPENHAB_USER, OPENHAB_PASSWORD)
     headers = {'content-type': "application/json; charset=utf-8"}
-    r = requests.get(url, auth=auth, headers=headers)
+    try:
+        r = requests.get(url, auth=auth, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error("Cannot stablish connection with openHAB server: {}".format(e))
+        return []
     r.encoding = 'utf-8'
     if r.status_code != 200:
-        return None
+        return []
     return json.loads(r.text)
 
 
@@ -72,10 +86,14 @@ def get_items_by_tag(tag):
     url = "http://{}:{}/rest/items?tags={}&recursive=true".format(OPENHAB_HOST, OPENHAB_PORT, tag)
     auth = (OPENHAB_USER, OPENHAB_PASSWORD)
     headers = {'content-type': "application/json; charset=utf-8"}
-    r = requests.get(url, auth=auth, headers=headers)
+    try:
+        r = requests.get(url, auth=auth, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error("Cannot stablish connection with openHAB server: {}".format(e))
+        return []
     r.encoding = 'utf-8'
     if r.status_code != 200:
-        return None
+        return []
     return json.loads(r.text)
 
 
@@ -85,8 +103,12 @@ def get_items_by_tag_and_type(tag, item_type):
     url = "http://{}:{}/rest/items?type={}&tags={}&recursive=true".format(OPENHAB_HOST, OPENHAB_PORT, item_type, tag)
     auth = (OPENHAB_USER, OPENHAB_PASSWORD)
     headers = {'content-type': "application/json; charset=utf-8"}
-    r = requests.get(url, auth=auth, headers=headers)
+    try:
+        r = requests.get(url, auth=auth, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error("Cannot stablish connection with openHAB server: {}".format(e))
+        return []
     r.encoding = 'utf-8'
     if r.status_code != 200:
-        return None
+        return []
     return json.loads(r.text)
