@@ -1,5 +1,8 @@
 *.json
 *.yml
 *.pyc
+*.mo
+*.po
+_cache
 __pycache__
 dist/*
