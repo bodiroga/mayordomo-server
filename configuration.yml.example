@@ -1,0 +1,7 @@
+language:
+  language_code: es-ES
+mqtt:
+  host: localhost
+  port: 1883
+  password: 
+  username: 
