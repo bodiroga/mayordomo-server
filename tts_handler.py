@@ -68,6 +68,8 @@ def message_handler(_, __, msg):
     text = audio_info["text"]
 
     audio_file = get_audio_file(text, language, gender)
+    if not audio_file:
+        return
     with open(audio_file, 'rb') as f:
         audio_data = base64.b64encode(f.read())
     payload = {"status": 200, "data": audio_data}
