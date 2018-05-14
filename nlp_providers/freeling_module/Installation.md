@@ -21,7 +21,7 @@
 - sudo apt install -y libboost-regex-dev libicu-dev
 - sudo apt install -y libboost-system-dev libboost-program-options-dev
 - sudo apt install -y libboost-thread-dev
-- sudo apt install -y git
+- sudo apt install -y git swig3.0
 
 ### Get source code ###
 - git clone https://github.com/TALP-UPC/FreeLing.git
