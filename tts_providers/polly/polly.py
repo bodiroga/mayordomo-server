@@ -35,6 +35,7 @@ def load_credentials(credentials_path="credentials.json"):
             config = json.load(jsonfile)
             os.environ["AWS_ACCESS_KEY_ID"] = config["ACCESS_KEY"]
             os.environ["AWS_SECRET_ACCESS_KEY"] = config["SECRET_KEY"]
+            os.environ["AWS_DEFAULT_REGION"] = config["DEFAULT_REGION"]
             logger.debug("Configuration file '{}' loaded".format(filename))
     except IOError:
         logger.error("Configuration file '{}' does not exist".format(filename))
