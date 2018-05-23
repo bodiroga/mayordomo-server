@@ -69,7 +69,7 @@ def load_modules():
 def get_word_info(word):
     word = word.split("_")[0]
     l = FREELING_MODULES["tk"].tokenize(word)
-    ls = FREELING_MODULES["sp"].split(FREELING_MODULES["sid"], l, 1)
+    ls = FREELING_MODULES["sp"].split(l)
     ls = FREELING_MODULES["mf"].analyze(ls)
     ls = FREELING_MODULES["tg"].analyze(ls)
     w = ls[0].get_words()[0]
@@ -94,7 +94,7 @@ def get_word_lemma(word):
 def get_sentence_lemmas(sentence):
     new_sentence = []
     l = FREELING_MODULES["tk"].tokenize(sentence)
-    ls = FREELING_MODULES["sp"].split(FREELING_MODULES["sid"], l, 1)
+    ls = FREELING_MODULES["sp"].split(l)
     ls = FREELING_MODULES["mf"].analyze(ls)
     ls = FREELING_MODULES["tg"].analyze(ls)
     if FREELING_MODULES["parser"]:
