@@ -45,13 +45,16 @@ def handle_message(mosq, obj, msg):
     utterance_lemmas = nlp_providers_handler.get_sentence_lemmas(utterance)
     logger.debug("Request lemma: {}".format(utterance_lemmas))
 
+    final_intent = None
     for final_intent in engine_handler.determine_intent(utterance_lemmas, context_manager=user_session.get_context_manager()):
         pass
 
+    logger.debug("The final intent is: {}".format(final_intent))
     if not final_intent:
         answer = Notification("Error", "Error")
         device.send_answer(answer.to_json())
         return
+
     for category, entity in final_intent["entities"].iteritems():
         metadata = engine_handler.get_entity_metadata(entity)
         user_session.inject_context({'data': [(entity, category, metadata)], 'key': entity, 'confidence': 0.75})
