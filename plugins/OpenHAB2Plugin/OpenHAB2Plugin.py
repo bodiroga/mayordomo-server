@@ -48,7 +48,8 @@ class OpenHAB2Plugin(Plugin):
         entities["LightOnOffLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                  for item in oh.get_items_by_tag("Lighting")
-                                                 if item["type"] in ["Switch", "Dimmer", "Color"]]
+                                                 if item["type"] in ["Switch", "Dimmer", "Color"] or 
+                                                    (item["type"] == "Group" and item["groupType"] in ["Switch", "Dimmer", "Color"])]
         entities["LightOnOffLabel"]["question"] = self._sentence("Which light?")
 
         entities["OnOffAction"] = {}
@@ -63,7 +64,8 @@ class OpenHAB2Plugin(Plugin):
         entities["LightDimLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                for item in oh.get_items_by_tag("Lighting")
-                                               if item["type"] in ["Dimmer", "Color"]]
+                                               if item["type"] in ["Dimmer", "Color"] or
+                                                (item["type"] == "Group" and item["groupType"] in ["Dimmer", "Color"])]
         entities["LightDimLabel"]["question"] = self._sentence("Which light?")
 
         entities["PercentageValue"] = {}
@@ -75,7 +77,7 @@ class OpenHAB2Plugin(Plugin):
         entities["LightColorLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                  for item in oh.get_items_by_tag("Lighting")
-                                                 if item["type"] in ["Color"]]
+                                                 if item["type"] in ["Color"]  or (item["type"] == "Group" and item["groupType"] == "Color")]
         entities["LightColorLabel"]["question"] = self._sentence("Which light?")
 
         entities["ColorKeyword"] = {}
@@ -97,7 +99,7 @@ class OpenHAB2Plugin(Plugin):
         entities["ShutterLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                  for item in oh.get_items_by_tag("Rollershutter")
-                                                 if item["type"] in ["Rollershutter"]]
+                                                 if item["type"] in ["Rollershutter"] or (item["type"] == "Group" and item["groupType"] == "Rollershutter")]
         entities["ShutterLabel"]["question"] = self._sentence("Which blinds?")
 
         entities["ShutterKeyword"] = {}
@@ -112,7 +114,7 @@ class OpenHAB2Plugin(Plugin):
         entities["TemperatureLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                   for item in oh.get_items_by_tag("CurrentTemperature")
-                                                  if item["type"] in ["Number"]]
+                                                  if item["type"] in ["Number"] or (item["type"] == "Group" and item["groupType"] == "Number")]
         entities["TemperatureLabel"]["question"] = self._sentence("In which room?")
 
         entities["HumidityKeyword"] = {}
@@ -123,7 +125,7 @@ class OpenHAB2Plugin(Plugin):
         entities["HumidityLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                for item in oh.get_items_by_tag("CurrentHumidity")
-                                               if item["type"] in ["Number"]]
+                                               if item["type"] in ["Number"] or (item["type"] == "Group" and item["groupType"] == "Number")]
         entities["HumidityLabel"]["question"] = self._sentence("In which room?")
 
         entities["BrightnessKeyword"] = {}
@@ -134,14 +136,14 @@ class OpenHAB2Plugin(Plugin):
         entities["BrightnessLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                  for item in oh.get_items_by_tag("CurrentBrightness")
-                                                 if item["type"] in ["Number"]]
+                                                 if item["type"] in ["Number"] or (item["type"] == "Group" and item["groupType"] == "Number")]
         entities["BrightnessLabel"]["question"] = self._sentence("In which room?")
 
         entities["SwitchableOnOffLabel"] = {}
         entities["SwitchableOnOffLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
                                                         dynamic=(True, self))
                                                  for item in oh.get_items_by_tag("Switchable")
-                                                 if item["type"] in ["Switch"]]
+                                                 if item["type"] in ["Switch"] or (item["type"] == "Group" and item["groupType"] == "Switch")]
         entities["SwitchableOnOffLabel"]["question"] = self._sentence("Which device?")
 
         return entities
