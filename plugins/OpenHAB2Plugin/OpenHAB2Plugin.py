@@ -22,6 +22,10 @@ class OpenHAB2Plugin(Plugin):
         intents["set_light_color"] = {}
         intents["set_light_color"]["require"] = ["LightKeyword", "LightColorLabel", "ColorKeyword", "ColorValue"]
 
+        intents["set_shutter_level"] = {}
+        intents["set_shutter_level"]["require"] = ["IncreaseDecreaseAction", "ShutterLabel", "ShutterKeyword"]
+        intents["set_shutter_level"]["optionally"] = ["PercentageValue"]
+
         intents["get_temperature"] = {}
         intents["get_temperature"]["require"] = ["TemperatureKeyword", "TemperatureLabel"]
 
@@ -88,6 +92,17 @@ class OpenHAB2Plugin(Plugin):
         entities["IncreaseDecreaseAction"]["values"] = [self._("increase", pos="verb"), self._("decrease", pos="verb"),
                                                         self._("dim", pos="verb")]
         entities["IncreaseDecreaseAction"]["question"] = self._sentence("What do you want to do with the light?")
+
+        entities["ShutterLabel"] = {}
+        entities["ShutterLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
+                                                        dynamic=(True, self))
+                                                 for item in oh.get_items_by_tag("Rollershutter")
+                                                 if item["type"] in ["Rollershutter"]]
+        entities["ShutterLabel"]["question"] = self._sentence("Which blinds?")
+
+        entities["ShutterKeyword"] = {}
+        entities["ShutterKeyword"]["values"] = [self._("blind", pos='noun')]
+        entities["ShutterKeyword"]["question"] = self._sentence("What do you want to do?")
 
         entities["TemperatureKeyword"] = {}
         entities["TemperatureKeyword"]["values"] = [self._("temperature", pos="noun")]
@@ -168,6 +183,22 @@ class OpenHAB2Plugin(Plugin):
         item_name = oh.get_item_name_by_label(original_item_label, "Lighting")
         oh.send_command(item_name, self.color_mapping.get(original_new_color))
         text = self._sentence("{} light {}".format(item_label, original_new_color))
+        return Notification(text=text)
+
+    def set_shutter_level(self, entities):
+        original_item_label = entities["ShutterLabel"]["entity_original_value"]
+        item_label = entities["ShutterLabel"]["entity_value"]
+        action = entities["IncreaseDecreaseAction"]["entity_original_value"]
+        item_name = oh.get_item_name_by_label(original_item_label, "RollerShutter")
+
+        if "PercentageValue" in entities:
+            new_item_state = entities["PercentageValue"]
+            if "%" in new_item_state:
+                new_item_state = new_item_state.replace("%", "")
+        else:
+            new_item_state = 0 if action == "increase" else 100
+        oh.send_command(item_name, new_item_state)
+        text = self._sentence("{} blinds at {} percent".format(item_label, new_item_state))
         return Notification(text=text)
 
     def get_temperature(self, entities):
