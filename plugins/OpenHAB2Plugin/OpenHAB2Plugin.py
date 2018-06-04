@@ -23,7 +23,7 @@ class OpenHAB2Plugin(Plugin):
         intents["set_light_color"]["require"] = ["LightKeyword", "LightColorLabel", "ColorKeyword", "ColorValue"]
 
         intents["set_shutter_level"] = {}
-        intents["set_shutter_level"]["require"] = ["IncreaseDecreaseAction", "ShutterLabel", "ShutterKeyword"]
+        intents["set_shutter_level"]["require"] = ["PullUpDownAction", "ShutterLabel", "ShutterKeyword"]
         intents["set_shutter_level"]["optionally"] = ["PercentageValue"]
 
         intents["get_temperature"] = {}
@@ -94,6 +94,11 @@ class OpenHAB2Plugin(Plugin):
         entities["IncreaseDecreaseAction"]["values"] = [self._("increase", pos="verb"), self._("decrease", pos="verb"),
                                                         self._("dim", pos="verb")]
         entities["IncreaseDecreaseAction"]["question"] = self._sentence("What do you want to do with the light?")
+
+        entities["PullUpDownAction"] = {}
+        entities["PullUpDownAction"]["values"] = [self._("pull_up", pos="verb"), self._("pull_down", pos="verb"),
+                                                        self._("dim", pos="verb")]
+        entities["PullUpDownAction"]["question"] = self._sentence("What do you want to do?")
 
         entities["ShutterLabel"] = {}
         entities["ShutterLabel"]["values"] = [self._(item["label"], original_lang=self.openhab_language_alpha_3,
@@ -190,16 +195,17 @@ class OpenHAB2Plugin(Plugin):
     def set_shutter_level(self, entities):
         original_item_label = entities["ShutterLabel"]["entity_original_value"]
         item_label = entities["ShutterLabel"]["entity_value"]
-        action = entities["IncreaseDecreaseAction"]["entity_original_value"]
-        item_name = oh.get_item_name_by_label(original_item_label, "RollerShutter")
+        action = entities["PullUpDownAction"]["entity_original_value"]
+        item_name = oh.get_item_name_by_label(original_item_label, "Rollershutter")
 
         if "PercentageValue" in entities:
             new_item_state = entities["PercentageValue"]
             if "%" in new_item_state:
                 new_item_state = new_item_state.replace("%", "")
+            oh.send_command(item_name, new_item_state)
         else:
-            new_item_state = 0 if action == "increase" else 100
-        oh.send_command(item_name, new_item_state)
+            new_item_state = "ok"
+            oh.send_command(item_name, self.pull_up_down_mapping[action])
         text = self._sentence("{} blinds at {} percent".format(item_label, new_item_state))
         return Notification(text=text)
 
@@ -243,6 +249,7 @@ class OpenHAB2Plugin(Plugin):
         self.openhab_language = openhab_config['language']
         self.openhab_language_alpha_3 = self.get_language_alpha_3(self.openhab_language)
         self.on_off_mapping = {"switch_on": "ON", "switch_off": "OFF"}
+        self.pull_up_down_mapping = {"pull_up": "UP", "pull_down": "DOWN", "dim": "DOWN"}
         self.color_mapping = {"red": "0,100,100", "blue": "240,100,100", "green": "120,100,50", "yellow": "60,100,100",
                               "white": "0,0,100", "purple": "300,100,50"}
 
